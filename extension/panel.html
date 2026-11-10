@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>ProspectIQ AI</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="demo.js" defer></script>
+  <script src="panel.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.8" stroke="white" stroke-width="1.8"/><circle cx="12" cy="12" r="3.4" stroke="white" stroke-width="1.8"/><path d="M12 2V6M22 12H18M12 22V18M2 12H6" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-name"><strong>prospect<span>iq</span></strong><small>MEETING INTELLIGENCE</small></div>
+      <div class="top-actions">
+        <span class="connect-status" id="connection-status"><i></i> Demo ready</span>
+        <button id="settings-toggle" class="icon-button" title="Settings" aria-label="Settings">⚙</button>
+      </div>
+    </header>
+
+    <section class="hero" id="hero">
+      <div class="eyebrow"><span class="sparkle">✦</span> YOUR PRE-MEETING ADVANTAGE</div>
+      <h1>Walk into every meeting <em>one step ahead.</em></h1>
+      <p>Research the company. Understand the buyer. Ask smarter questions.</p>
+      <div class="hero-metrics"><span>◉ Source-linked facts</span><span>✦ Tailored playbook</span><span>↗ Save & share</span></div>
+    </section>
+
+    <section class="settings panel-card hidden" id="settings-panel" aria-label="Backend settings">
+      <div class="section-head"><h2>Local backend settings</h2><button class="text-button" id="settings-close">Close</button></div>
+      <label for="access-token">Client access token <span class="muted">(not your OpenAI key)</span></label>
+      <input type="password" id="access-token" placeholder="Same token as backend/.env" autocomplete="off" />
+      <p class="field-help">The OpenAI API key belongs on the backend only. This client token is stored locally in Chrome.</p>
+      <button id="settings-save" class="button secondary full">Save settings</button>
+    </section>
+
+    <nav class="primary-tabs" aria-label="Main sections">
+      <button class="primary-tab active" id="nav-research" data-view="research">New research</button>
+      <button class="primary-tab" id="nav-saved" data-view="saved">Saved briefs <span class="counter" id="saved-count">0</span></button>
+    </nav>
+
+    <main>
+      <section id="view-research">
+        <div class="section-head compact"><div><span class="step-label">01 / RESEARCH INPUT</span><h2>Who are you meeting?</h2></div><button class="text-button" id="demo-button">Try a demo ↗</button></div>
+        <form id="research-form">
+          <div class="form-grid">
+            <div class="field"><label for="person">Prospect name <span class="optional">optional</span></label><input id="person" placeholder="e.g. Priya Sharma" maxlength="100" /></div>
+            <div class="field"><label for="role">Job title / role</label><input id="role" placeholder="e.g. VP Operations" maxlength="120" /></div>
+          </div>
+          <div class="field"><label for="company">Company name <span class="required">*</span></label><input id="company" placeholder="e.g. Acme Logistics Pvt Ltd" maxlength="150" required /></div>
+          <div class="field"><label for="website">Company website <span class="optional">optional</span></label><div class="input-with-action"><input id="website" placeholder="https://company.com" maxlength="250" type="url"/><button id="capture-tab" type="button" title="Use company details from the current website">Use current tab</button></div><div id="capture-note" class="field-help">Optional: captures page title, description and selected text only when clicked.</div></div>
+          <div class="divider-label">YOUR SALES CONTEXT <span></span></div>
+          <div class="field"><label for="seller-offer">What are you selling? <span class="required">*</span></label><textarea id="seller-offer" placeholder="e.g. Supply chain automation software that improves shipment visibility" maxlength="900" rows="3" required></textarea></div>
+          <div class="field"><label for="objective">Meeting objective</label><select id="objective"><option value="discovery">Discovery call — uncover needs</option><option value="demo">Product demo — show relevance</option><option value="proposal">Proposal meeting — handle objections</option><option value="partnership">Partnership meeting — find alignment</option></select></div>
+          <div class="action-stack"><button id="generate-button" class="button primary full" type="submit"><span class="button-icon">✦</span> Generate intelligence brief <span class="end-arrow">→</span></button><p class="fineprint">Live research needs your local AI backend. Try the demo without an API key.</p></div>
+        </form>
+        <div id="loading" class="loading hidden" aria-live="polite"><div class="loader"></div><div><strong>Building your intelligence brief</strong><span id="loading-message">Researching company signals and crafting meeting questions…</span></div></div>
+        <div id="error-alert" class="error-alert hidden" role="alert"></div>
+      </section>
+
+      <section id="view-saved" class="hidden"><div class="section-head"><div><span class="step-label">YOUR LIBRARY</span><h2>Saved intelligence</h2></div></div><div id="saved-list" class="saved-list"></div></section>
+
+      <section id="results" class="results hidden" aria-label="Intelligence brief">
+        <div class="results-header"><div><div class="step-label">02 / YOUR MEETING INTELLIGENCE</div><h2 id="result-company"></h2><p id="result-subtitle"></p></div><div class="result-tag" id="result-tag">LIVE</div></div>
+        <div class="result-toolbar"><button class="toolbar-button" id="save-brief">☆ Save</button><button class="toolbar-button" id="copy-brief">▤ Copy</button><button class="toolbar-button" id="export-brief">↓ Export .md</button></div>
+        <div class="notice"><strong>Evidence matters.</strong> Source-linked observations, seller inputs and AI hypotheses are labelled separately. Verify important claims before meetings.</div>
+        <div class="result-tabs" role="tablist"><button class="result-tab active" data-result-tab="brief" role="tab" aria-selected="true">Brief</button><button class="result-tab" data-result-tab="account" role="tab">Company</button><button class="result-tab" data-result-tab="playbook" role="tab">Playbook</button></div>
+        <div id="result-content" class="result-content"></div>
+        <div class="results-footer"><button id="new-brief" class="button secondary full">＋ Prepare another meeting</button></div>
+      </section>
+    </main>
+    <footer class="footer"><span><span class="footer-dot"></span> PROSPECTIQ MVP • v0.1</span><span>Research ≠ certainty</span></footer>
+  </div>
+  <div id="toast" role="status" aria-live="polite" class="toast hidden"></div>
+</body>
+</html>

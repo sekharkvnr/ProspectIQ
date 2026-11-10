@@ -1,0 +1,9 @@
+{
+  "name": "prospectiq-local-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local AI-backed pre-meeting research server for the ProspectIQ Chrome extension",
+  "engines": {"node": ">=20.11.0"},
+  "scripts": {"start": "node server.mjs", "test": "node --test ../tests/*.test.mjs"}
+}
